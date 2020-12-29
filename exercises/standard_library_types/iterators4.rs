@@ -1,7 +1,5 @@
 // iterators4.rs
 
-// I AM NOT DONE
-
 pub fn factorial(num: u64) -> u64 {
     match num {
         0 => 0,
