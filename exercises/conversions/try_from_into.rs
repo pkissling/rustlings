@@ -11,8 +11,6 @@ struct Color {
     blue: u8,
 }
 
-// I AM NOT DONE
-
 // Your task is to complete this implementation
 // and return an Ok result of inner type Color.
 // You need to create an implementation for a tuple of three integers,
@@ -25,19 +23,55 @@ struct Color {
 // Tuple implementation
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = String;
-    fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {}
+    fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        parse([tuple.0, tuple.1, tuple.2])
+    }
 }
 
 // Array implementation
 impl TryFrom<[i16; 3]> for Color {
     type Error = String;
-    fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {}
+    fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        parse(arr)
+    }
 }
 
 // Slice implementation
 impl TryFrom<&[i16]> for Color {
     type Error = String;
-    fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {}
+    fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() != 3 {
+            return Err(String::from("nope"));
+        }
+        parse([slice[0],slice[1],slice[2]])
+    }
+}
+
+fn parse(rgb: [i16; 3]) -> Result<Color, String> {
+    fn to_u8(v: i16) -> Option<u8> {
+        if v < 0 || v > std::u8::MAX as i16 {
+            None
+        } else {
+            Some(v as u8)
+        }
+    }
+
+    let parsed_rgb: Vec<u8> = rgb
+        .iter()
+        .map(|i| to_u8(*i))
+        .filter(|result| result.is_some())
+        .map(|result| result.unwrap())
+        .collect();
+
+    if parsed_rgb.len() != 3 {
+        return Err(String::from("Error"));
+    }
+
+    Ok(Color {
+        red: parsed_rgb[0],
+        green: parsed_rgb[1],
+        blue: parsed_rgb[2],
+    })
 }
 
 fn main() {
